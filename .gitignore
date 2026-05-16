@@ -1,0 +1,21 @@
+# Python / uv
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+
+# データファイル（初期状態は空のままにする）
+backend/data/graph.json
+
+# Node.js
+frontend/node_modules/
+frontend/dist/
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
