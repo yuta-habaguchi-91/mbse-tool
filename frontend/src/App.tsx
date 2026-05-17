@@ -1,8 +1,9 @@
 import './App.css';
 import { useGraph } from './hooks/useGraph';
-import Canvas from './components/Canvas';
-import Toolbar from './components/Toolbar';
-import Sidebar from './components/Sidebar';
+import Canvas   from './components/Canvas';
+import Toolbar  from './components/Toolbar';
+import Sidebar  from './components/Sidebar';
+import ViewTabs from './components/ViewTabs';
 
 export default function App() {
   const {
@@ -11,7 +12,10 @@ export default function App() {
     selectedNode, selectedEdge,
     addBlock, deleteSelected,
     updateNodeLabel, updateEdgeArrow, toggleNodeVisibility,
+    diagramLineType, setDiagramLineType,
     filterMode, setFilterMode,
+    views, activeViewId,
+    switchView, addView, renameView, deleteView,
     handleSave, loadGraph,
   } = useGraph();
 
@@ -22,6 +26,14 @@ export default function App() {
         onDelete={deleteSelected}
         onSave={handleSave}
         onLoad={loadGraph}
+      />
+      <ViewTabs
+        views={views}
+        activeViewId={activeViewId}
+        onSwitch={switchView}
+        onAdd={addView}
+        onRename={renameView}
+        onDelete={deleteView}
       />
       <div className="app-main">
         <div className="canvas-wrapper">
@@ -38,9 +50,11 @@ export default function App() {
           selectedNode={selectedNode}
           selectedEdge={selectedEdge}
           filterMode={filterMode}
+          diagramLineType={diagramLineType}
           onFilterModeChange={setFilterMode}
           onLabelChange={updateNodeLabel}
           onArrowChange={updateEdgeArrow}
+          onDiagramLineTypeChange={setDiagramLineType}
           onToggleVisibility={toggleNodeVisibility}
         />
       </div>

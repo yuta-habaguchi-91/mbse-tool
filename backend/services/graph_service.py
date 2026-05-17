@@ -15,4 +15,5 @@ def load_graph() -> Graph:
 def save_graph(graph: Graph) -> None:
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(graph.model_dump(), f, ensure_ascii=False, indent=2)
+        # by_alias=True で camelCase キーを使って保存する
+        json.dump(graph.model_dump(by_alias=True), f, ensure_ascii=False, indent=2)

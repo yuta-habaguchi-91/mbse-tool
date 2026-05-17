@@ -16,6 +16,69 @@
   height: 100%;
 }
 
+/* ===== ビュータブ ===== */
+.view-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  height: 34px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.view-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  font-size: 12px;
+  color: #64748b;
+  border: 1px solid transparent;
+  border-bottom: none;
+  white-space: nowrap;
+  user-select: none;
+  transition: background 0.1s;
+}
+.view-tab:hover       { background: #e2e8f0; color: #334155; }
+.view-tab.active      { background: white; color: #1e293b; border-color: #e2e8f0; font-weight: 500; }
+
+.view-tab-input {
+  font-size: 12px;
+  border: 1px solid #3b82f6;
+  border-radius: 3px;
+  padding: 1px 4px;
+  width: 90px;
+  outline: none;
+}
+
+.view-tab-close {
+  font-size: 11px;
+  color: #94a3b8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+.view-tab-close:hover { color: #ef4444; }
+
+.view-tab-add {
+  font-size: 14px;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+.view-tab-add:hover { background: #e2e8f0; color: #334155; }
+
 /* ===== ツールバー ===== */
 .toolbar {
   display: flex;
@@ -142,10 +205,6 @@
   margin: 0;
 }
 
-.arrow-toggle {
-  display: flex;
-  gap: 6px;
-}
 
 /* ===== ブロック一覧 ===== */
 .block-list {
@@ -195,6 +254,31 @@
   font-weight: 500;
   color: #1e293b;
   white-space: nowrap;
+}
+
+/* ダブルクリック時のインライン編集フィールド */
+.block-label-input {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  border: 1px solid #3b82f6;
+  border-radius: 3px;
+  padding: 1px 4px;
+  width: 100%;
+  min-width: 80px;
+  outline: none;
+  text-align: center;
+}
+
+.sidebar-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 4px 0 0;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 6px;
 }
 
 /* React Flow のハンドル（接続点）スタイル */

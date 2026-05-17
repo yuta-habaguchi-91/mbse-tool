@@ -1,26 +1,44 @@
 import type { AppNode, AppEdge } from '../hooks/useGraph';
-import type { ArrowType, FilterMode } from '../types/graph';
+import type { ArrowType, LineType, FilterMode } from '../types/graph';
 
 interface SidebarProps {
-  nodes: AppNode[];                          // 全ブロック（表示切り替えリスト用）
+  nodes: AppNode[];
   selectedNode: AppNode | null;
   selectedEdge: AppEdge | null;
   filterMode: FilterMode;
-  onFilterModeChange: (mode: FilterMode) => void;
-  onLabelChange: (id: string, label: string) => void;
-  onArrowChange: (id: string, arrow: ArrowType) => void;
-  onToggleVisibility: (id: string) => void;
+  diagramLineType: LineType;
+  onFilterModeChange:    (mode: FilterMode)  => void;
+  onLabelChange:         (id: string, label: string)   => void;
+  onArrowChange:         (id: string, arrow: ArrowType) => void;
+  onDiagramLineTypeChange: (lt: LineType) => void;
+  onToggleVisibility:    (id: string) => void;
 }
 
 export default function Sidebar({
   nodes, selectedNode, selectedEdge,
-  filterMode, onFilterModeChange,
-  onLabelChange, onArrowChange, onToggleVisibility,
+  filterMode, diagramLineType,
+  onFilterModeChange, onLabelChange, onArrowChange,
+  onDiagramLineTypeChange, onToggleVisibility,
 }: SidebarProps) {
   return (
     <aside className="sidebar">
 
-      {/* プロパティパネル: ノード選択時 */}
+      {/* 図の設定: 線種（全エッジに一括適用） */}
+      <section className="sidebar-section">
+        <p className="sidebar-label">線の種類（図全体）</p>
+        <div className="toggle-group">
+          <button
+            className={`btn ${diagramLineType === 'bezier' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => onDiagramLineTypeChange('bezier')}
+          >〜 曲線</button>
+          <button
+            className={`btn ${diagramLineType === 'smoothstep' ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => onDiagramLineTypeChange('smoothstep')}
+          >┐ 矩形線</button>
+        </div>
+      </section>
+
+      {/* ノード選択時: 名前編集 */}
       {selectedNode && (
         <section className="sidebar-section">
           <p className="sidebar-label">ブロック名</p>
@@ -29,14 +47,15 @@ export default function Sidebar({
             value={selectedNode.data.label}
             onChange={e => onLabelChange(selectedNode.id, e.target.value)}
           />
+          <p className="sidebar-hint">ダブルクリックでキャンバス上でも編集できます</p>
         </section>
       )}
 
-      {/* プロパティパネル: エッジ選択時 */}
+      {/* エッジ選択時: 矢印種別 */}
       {selectedEdge && (
         <section className="sidebar-section">
           <p className="sidebar-label">矢印の種類</p>
-          <div className="arrow-toggle">
+          <div className="toggle-group">
             <button
               className={`btn ${selectedEdge.data?.arrow === 'single' ? 'btn-primary' : 'btn-ghost'}`}
               onClick={() => onArrowChange(selectedEdge.id, 'single')}
@@ -49,20 +68,18 @@ export default function Sidebar({
         </section>
       )}
 
-      {/* フィルタ */}
+      {/* 表示フィルタ */}
       <section className="sidebar-section">
         <p className="sidebar-label">表示フィルタ</p>
         <label className="sidebar-radio">
-          <input
-            type="radio" name="filter"
+          <input type="radio" name="filter"
             checked={filterMode === 'all'}
             onChange={() => onFilterModeChange('all')}
           />
           全表示
         </label>
         <label className="sidebar-radio">
-          <input
-            type="radio" name="filter"
+          <input type="radio" name="filter"
             checked={filterMode === 'related'}
             onChange={() => onFilterModeChange('related')}
           />
