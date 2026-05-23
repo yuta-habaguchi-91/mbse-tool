@@ -280,6 +280,8 @@ export function useGraph() {
         id: c.id,
         source: c.source,
         target: c.target,
+        sourceHandle: c.sourceHandle ?? null,
+        targetHandle: c.targetHandle ?? null,
         data: { arrow: c.arrow, lineType: lt, visible: c.visible },
         ...edgeProps(c.arrow, lt),
       })));
@@ -302,6 +304,8 @@ export function useGraph() {
           id: e.id,
           source: e.source,
           target: e.target,
+          sourceHandle: e.sourceHandle ?? null,
+          targetHandle: e.targetHandle ?? null,
           arrow:    e.data?.arrow    ?? 'single',
           lineType: e.data?.lineType ?? diagramLineType,
           visible:  true,

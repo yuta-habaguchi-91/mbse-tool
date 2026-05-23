@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field, ConfigDict
 import uuid, re
 
@@ -34,8 +34,10 @@ class Connector(CamelModel):
     id: str = Field(default_factory=new_id)
     source: str
     target: str
-    arrow: str = "single"       # "single" | "double"
-    line_type: str = "bezier"   # JSON: "lineType"
+    source_handle: Optional[str] = None  # JSON: "sourceHandle"
+    target_handle: Optional[str] = None  # JSON: "targetHandle"
+    arrow: str = "single"                # "single" | "double"
+    line_type: str = "bezier"            # JSON: "lineType"
     visible: bool = True
 
 

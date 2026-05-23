@@ -15,6 +15,8 @@ export interface ConnectorData {
   id: string;
   source: string;
   target: string;
+  sourceHandle: string | null;  // 接続元ハンドルID（top/bottom/left/right）
+  targetHandle: string | null;  // 接続先ハンドルID
   arrow: ArrowType;
   lineType: LineType;
   visible: boolean;
