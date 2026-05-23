@@ -28,6 +28,41 @@ function edgeProps(arrow: ArrowType, lineType: LineType) {
   };
 }
 
+// --- ハンドル最近接計算 ---
+const HANDLE_KEYS = ['top', 'bottom', 'left', 'right'] as const;
+type HandleKey = typeof HANDLE_KEYS[number];
+
+// ノードの各ハンドル絶対座標を返す（position は左上角、measured はレンダリング後の実測サイズ）
+function getHandlePositions(node: AppNode): Record<HandleKey, { x: number; y: number }> {
+  const { x, y } = node.position;
+  const w = node.measured?.width  ?? 140;
+  const h = node.measured?.height ?? 44;
+  return {
+    top:    { x: x + w / 2, y },
+    bottom: { x: x + w / 2, y: y + h },
+    left:   { x,             y: y + h / 2 },
+    right:  { x: x + w,      y: y + h / 2 },
+  };
+}
+
+function euclidean(a: { x: number; y: number }, b: { x: number; y: number }) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+// 2ノード間で最も近いハンドルペアを返す
+function nearestHandlePair(src: AppNode, tgt: AppNode): { sourceHandle: string; targetHandle: string } {
+  const sp = getHandlePositions(src);
+  const tp = getHandlePositions(tgt);
+  let best = { sourceHandle: 'right', targetHandle: 'left', dist: Infinity };
+  for (const sk of HANDLE_KEYS) {
+    for (const tk of HANDLE_KEYS) {
+      const d = euclidean(sp[sk], tp[tk]);
+      if (d < best.dist) best = { sourceHandle: sk, targetHandle: tk, dist: d };
+    }
+  }
+  return { sourceHandle: best.sourceHandle, targetHandle: best.targetHandle };
+}
+
 // ビューの hiddenBlockIds をノード配列に適用して visible フラグを更新する
 function applyViewVisibility(nodes: AppNode[], hiddenBlockIds: string[]): AppNode[] {
   const hiddenSet = new Set(hiddenBlockIds);
@@ -319,6 +354,18 @@ export function useGraph() {
     }
   }, [nodes, edges, views, diagramLineType]);
 
+  // 全エッジを最近接ハンドルで繋ぎ直す
+  const reconnectAllEdges = useCallback(() => {
+    saveSnapshot();
+    setEdges(eds => eds.map(e => {
+      const srcNode = nodes.find(n => n.id === e.source);
+      const tgtNode = nodes.find(n => n.id === e.target);
+      if (!srcNode || !tgtNode) return e;
+      const { sourceHandle, targetHandle } = nearestHandlePair(srcNode, tgtNode);
+      return { ...e, sourceHandle, targetHandle };
+    }));
+  }, [saveSnapshot, nodes, setEdges]);
+
   useEffect(() => { loadGraph(); }, [loadGraph]);
 
   return {
@@ -332,6 +379,7 @@ export function useGraph() {
     filterMode, setFilterMode,
     views, activeViewId, activeView,
     switchView, addView, renameView, deleteView,
+    reconnectAllEdges,
     handleSave, loadGraph,
   };
 }

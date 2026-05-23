@@ -16,6 +16,7 @@ export default function App() {
     filterMode, setFilterMode,
     views, activeViewId,
     switchView, addView, renameView, deleteView,
+    reconnectAllEdges,
     handleSave, loadGraph,
   } = useGraph();
 
@@ -26,6 +27,7 @@ export default function App() {
         onDelete={deleteSelected}
         onSave={handleSave}
         onLoad={loadGraph}
+        onReconnectEdges={reconnectAllEdges}
       />
       <ViewTabs
         views={views}
