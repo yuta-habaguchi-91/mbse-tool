@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   ReactFlow,
   Background,
@@ -6,6 +7,7 @@ import {
   type NodeChange,
   type EdgeChange,
   type Connection,
+  type Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import BlockNode from './BlockNode';
@@ -21,9 +23,20 @@ interface CanvasProps {
   onNodesChange: (changes: NodeChange<AppNode>[]) => void;
   onEdgesChange: (changes: EdgeChange<AppEdge>[]) => void;
   onConnect: (connection: Connection) => void;
+  onCtrlClickNode?: (id: string) => void;
+  onCancelCtrlClick?: () => void;
 }
 
-export default function Canvas({ nodes, edges, onNodesChange, onEdgesChange, onConnect }: CanvasProps) {
+export default function Canvas({
+  nodes, edges,
+  onNodesChange, onEdgesChange, onConnect,
+  onCtrlClickNode, onCancelCtrlClick,
+}: CanvasProps) {
+  // Ctrl+クリックを検知してノード接続モードに使う
+  const handleNodeClick = useCallback((_e: React.MouseEvent, node: Node) => {
+    if (_e.ctrlKey) onCtrlClickNode?.(node.id);
+  }, [onCtrlClickNode]);
+
   return (
     // ReactFlow は親要素の幅/高さをそのまま使うので、親に flex:1 を設定する
     <ReactFlow
@@ -32,6 +45,9 @@ export default function Canvas({ nodes, edges, onNodesChange, onEdgesChange, onC
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
+      onNodeClick={handleNodeClick}
+      // 空白エリアをクリックしたら Ctrl+クリック選択をキャンセル
+      onPaneClick={onCancelCtrlClick}
       nodeTypes={nodeTypes}
       // Loose モード: source/target の種別に関係なく任意ハンドル間で接続可能
       connectionMode={ConnectionMode.Loose}

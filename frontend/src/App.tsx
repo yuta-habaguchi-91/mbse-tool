@@ -17,6 +17,7 @@ export default function App() {
     views, activeViewId,
     switchView, addView, renameView, deleteView,
     reconnectAllEdges,
+    handleCtrlClickNode, cancelCtrlClick,
     handleSave, loadGraph,
   } = useGraph();
 
@@ -45,6 +46,8 @@ export default function App() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            onCtrlClickNode={handleCtrlClickNode}
+            onCancelCtrlClick={cancelCtrlClick}
           />
         </div>
         <Sidebar
