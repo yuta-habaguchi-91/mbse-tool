@@ -23,32 +23,62 @@ class Position(CamelModel):
     y: float
 
 
-class Block(CamelModel):
-    id: str = Field(default_factory=new_id)
-    name: str
-    position: Position
-    visible: bool = True  # 後方互換のため残す（ビュー機能移行後は使わない）
+# ===== ブロック（業務・作業のマスターデータ） =====
 
+class Revision(CamelModel):
+    """改訂履歴の1エントリ"""
+    rev_number: str = ""   # JSON: "revNumber"  改訂番号
+    rev_date:   str = ""   # JSON: "revDate"    改訂日付 (YYYY-MM-DD)
+    note:       str = ""   # 変更内容ノート
+
+
+class Block(CamelModel):
+    """業務・作業の属性情報（配置情報を持たない）"""
+    id:         str = Field(default_factory=new_id)
+    name:       str
+    doc_number: Optional[str] = None   # JSON: "docNumber"  資料番号
+    owner:      Optional[str] = None   # 担当者
+    contact:    Optional[str] = None   # 連絡先
+    revisions:  List[Revision] = []    # 改訂履歴（新しいものを末尾に追加する慣習）
+
+
+# ===== コネクタ（接続関係のみ。配置情報を持たない） =====
 
 class Connector(CamelModel):
-    id: str = Field(default_factory=new_id)
-    source: str
-    target: str
+    """ブロック間の接続関係と矢印種別"""
+    id:        str = Field(default_factory=new_id)
+    source:    str
+    target:    str
+    arrow:     str = "single"   # "single" | "double"
+    line_type: str = "bezier"   # JSON: "lineType"   "bezier" | "smoothstep"
+
+
+# ===== ビュー（配置情報＝図上の見え方） =====
+
+class BlockLayout(CamelModel):
+    """1ビュー内での1ブロックの配置情報"""
+    block_id:  str           # JSON: "blockId"
+    position:  Position
+    visible:   bool = True
+
+
+class EdgeLayout(CamelModel):
+    """1ビュー内での1コネクタの配置情報（接続ハンドルと表示フラグ）"""
+    connector_id:  str            # JSON: "connectorId"
     source_handle: Optional[str] = None  # JSON: "sourceHandle"
     target_handle: Optional[str] = None  # JSON: "targetHandle"
-    arrow: str = "single"                # "single" | "double"
-    line_type: str = "bezier"            # JSON: "lineType"
-    visible: bool = True
+    visible:       bool = True
 
 
 class View(CamelModel):
-    id: str = Field(default_factory=new_id)
-    name: str = "メインビュー"
-    hidden_block_ids: List[str] = []  # JSON: "hiddenBlockIds"
-    filter_mode: str = "all"          # JSON: "filterMode"
+    id:            str = Field(default_factory=new_id)
+    name:          str = "メインビュー"
+    filter_mode:   str = "all"              # JSON: "filterMode"
+    block_layouts: List[BlockLayout] = []   # JSON: "blockLayouts"
+    edge_layouts:  List[EdgeLayout]  = []   # JSON: "edgeLayouts"
 
 
 class Graph(CamelModel):
-    blocks: List[Block] = []
+    blocks:     List[Block]     = []
     connectors: List[Connector] = []
-    views: List[View] = []
+    views:      List[View]      = []

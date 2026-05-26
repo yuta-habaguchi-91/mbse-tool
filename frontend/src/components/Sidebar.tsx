@@ -38,7 +38,7 @@ export default function Sidebar({
         </div>
       </section>
 
-      {/* ノード選択時: 名前編集 */}
+      {/* ノード選択時: 名前編集 + 概要情報 */}
       {selectedNode && (
         <section className="sidebar-section">
           <p className="sidebar-label">ブロック名</p>
@@ -47,7 +47,21 @@ export default function Sidebar({
             value={selectedNode.data.label}
             onChange={e => onLabelChange(selectedNode.id, e.target.value)}
           />
-          <p className="sidebar-hint">ダブルクリックでキャンバス上でも編集できます</p>
+          {selectedNode.data.owner && (
+            <p className="sidebar-meta">担当: {selectedNode.data.owner}</p>
+          )}
+          {selectedNode.data.contact && (
+            <p className="sidebar-meta">連絡先: {selectedNode.data.contact}</p>
+          )}
+          {selectedNode.data.revisions?.at(-1) && (
+            <p className="sidebar-meta">
+              最新改訂: {selectedNode.data.revisions.at(-1)!.revNumber}
+              {selectedNode.data.revisions.at(-1)!.revDate && (
+                <> ({selectedNode.data.revisions.at(-1)!.revDate})</>
+              )}
+            </p>
+          )}
+          <p className="sidebar-hint">再クリック: 名前編集 / ダブルクリック: プロパティ編集</p>
         </section>
       )}
 
